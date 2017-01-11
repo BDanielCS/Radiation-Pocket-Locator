@@ -22,7 +22,8 @@ Radiaton Pocket Locator.vcxproj.filters
     "Source Files" filter).
 
 Radiaton Pocket Locator.cpp
-    This is the main application source file.
+    This is the main application source file. External library in use in Boost which
+    is not included in this repo
 
 /////////////////////////////////////////////////////////////////////////////
 Other standard files:
@@ -30,11 +31,5 @@ Other standard files:
 StdAfx.h, StdAfx.cpp
     These files are used to build a precompiled header (PCH) file
     named Radiaton Pocket Locator.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
 
 /////////////////////////////////////////////////////////////////////////////
