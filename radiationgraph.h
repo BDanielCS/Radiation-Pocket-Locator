@@ -6,6 +6,7 @@
 #define HAS_FILE 2
 #define MAX_LENGTH 24
 #define VACANT -1
+#define MAX_COORDINATE_ENTRIES 3
 
 #include <iostream>
 #include <string>
@@ -40,7 +41,7 @@ struct Location {
 //to the node where the value in the prompted coordinate is the same
 //as the value associated with the node
 struct Found {
-	bool node, value;
+	bool has_node, has_value;
 };
 
 //contains the location information and value with references 

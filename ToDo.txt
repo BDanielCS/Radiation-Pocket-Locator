@@ -1,6 +1,7 @@
 Order of Items to complete
 
 1. Ensure the addition works properly in All directions
+	--infinte loop on multi direction additions
 2. Ensure the size maintains the number of nodes properly
 3. Ensure delete properly frees all memory
 	--Destructor finish

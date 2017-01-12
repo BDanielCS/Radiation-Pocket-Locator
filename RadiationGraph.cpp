@@ -172,12 +172,15 @@ void RadiationGraph::updateLocation(Node* empty, Location* info, int index) {
 
 	empty->location_info = new Location;
 	empty->val = VACANT;
-	empty->location_info->coordinate = info->coordinate.substr(0, index);
+
+	//each "index" is actually two buckets 
+	empty->location_info->coordinate = info->coordinate.substr(0, (2 * index) + 2);
 
 	//copying the location(s) information over to the empty node
 	while (count <= index) {
-		empty->location_info->directionals[count] = info->directionals[count];
-		empty->location_info->distances[count] = info->distances[count];
+		empty->location_info->directionals.push_back(info->directionals[count]);
+		empty->location_info->distances.push_back(info->distances[count]);
+		count++;
 	}
 }
 
@@ -189,27 +192,23 @@ Found* RadiationGraph::find(string *command) {
 	Found *status = new Found;
 	map<string, Node*>::iterator found;
 	struct Location* parsed_location = new Location;
+	set<string> perms;
 
 	//parsed the commands and create location node as normal
 	new_node->location_info = parsed_location;
 	parseCommand(command, new_node);
+	status->has_node = false;
+	status->has_value = false;
 
-	found = knowledge_base.find(parsed_location->coordinate);
+	//check all permutations just in case
+	perms = Utility::permutations(parsed_location->coordinate);
 
-	//the node was found and it has the same value
-	if (found != knowledge_base.end() && found->second->val == new_node->val) {
-		status->node = true;
-		status->value = true;
-	}//only the node was found, but with different values
-	else if (found != knowledge_base.end()) {
-		status->node = true;
-		status->value = false;
-	}//nothing was found
-	else {
-		status->node = false;
-		status->value = false;
+	for (string coordinate : perms) {
+		if ((found = knowledge_base.find(coordinate)) != knowledge_base.end()) {
+			status->has_node = true;
+			found->second->val == VACANT ? status->has_value = false : status->has_value = true;
+		}
 	}
-
 	return status;
 }
 
@@ -232,6 +231,7 @@ void RadiationGraph::add(string *command) {
 		match->val = new_node->val;
 		delete new_node->location_info;
 		delete new_node;
+		return;
 	}
 
 	//update of the centroid value
@@ -252,18 +252,11 @@ void RadiationGraph::add(string *command) {
 //ex. N2E2 == E2N2.  If there is no perm found, 
 //then nullptr is returned
 Node* RadiationGraph::isMatch(Location* loc) {
-	//create the permuations and see if knowledge base contains
-	string directionsString;
+	
 	int counter = 0;
 	map<string, Node*>::iterator foundEntry;
 
-	for each (char var in loc->directionals){
-		directionsString.push_back(var);
-		directionsString.push_back(loc->distances[counter]);
-		counter++;
-	}
-
-	set<string> permutations =  Utility::permutations(directionsString);
+	set<string> permutations =  Utility::permutations(loc->coordinate);
 
 	//find match
 	for each(string perm in permutations) {
