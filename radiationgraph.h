@@ -12,6 +12,7 @@
 #include <vector>
 #include <boost/algorithm/string.hpp>
 #include <map>
+#include <set>
 
 const char NORTH = 'N';
 const char SOUTH = 'S';
@@ -60,7 +61,7 @@ public:
 	RadiationGraph();
 	~RadiationGraph();
 	const string printOptions();
-	int getSize();
+	size_t getSize();
 	void add(string*);
 	void display(int);
 	Found* find(string*);

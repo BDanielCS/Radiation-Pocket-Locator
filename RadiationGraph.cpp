@@ -17,7 +17,7 @@
 //DJ Sharma 
 
 #include "stdafx.h"
-#include "radiationgraph.h"
+#include "Utility.h"
 
 //optimizes the IO operations upon initialization
 RadiationGraph::RadiationGraph() {
@@ -49,7 +49,7 @@ RadiationGraph::~RadiationGraph() {
 
 //return the amount of nodes created, nodes can be
 //created while moving towards a desired coordinate
-int RadiationGraph::getSize() { return knowledge_base.size(); }
+size_t RadiationGraph::getSize() { return knowledge_base.size(); }
 
 //displays all of the nodes in the graph currently as well
 // as all of the neighbors to each node. Nodes that were created 
@@ -219,14 +219,19 @@ Found* RadiationGraph::find(string *command) {
 void RadiationGraph::add(string *command) {
 
 	Node* new_node = new Node;
+	Node* match;
 	struct Location* parsed_location = new Location;
 
 	new_node->location_info = parsed_location;
 	parseCommand(command, new_node);
 
 	//permutation swap and check if node equivalent position
-	if (isMatch(parsed_location)) {
+	if ((match = isMatch(parsed_location)) != nullptr) {
 
+		//match found so update its value and free memory for unnecessary new node
+		match->val = new_node->val;
+		delete new_node->location_info;
+		delete new_node;
 	}
 
 	//update of the centroid value
@@ -245,11 +250,28 @@ void RadiationGraph::add(string *command) {
 //determine if a permutation of the inputted coordinate 
 //is equivalent to one that is already in the graph
 //ex. N2E2 == E2N2.  If there is no perm found, 
-//then null is returned
+//then nullptr is returned
 Node* RadiationGraph::isMatch(Location* loc) {
 	//create the permuations and see if knowledge base contains
-	
+	string directionsString;
+	int counter = 0;
+	map<string, Node*>::iterator foundEntry;
 
+	for each (char var in loc->directionals){
+		directionsString.push_back(var);
+		directionsString.push_back(loc->distances[counter]);
+		counter++;
+	}
+
+	set<string> permutations =  Utility::permutations(directionsString);
+
+	//find match
+	for each(string perm in permutations) {
+		if ((foundEntry = knowledge_base.find(perm)) != knowledge_base.end()) {
+			return foundEntry->second;
+		}
+	}
+	return nullptr;
 }
 
 //returns an immutable copy of the knowledge base map
@@ -264,7 +286,6 @@ void RadiationGraph::addRecursive(Node* curr, Node* prev, Node* new_node,
 	int current_location) {
 
 	bool last_coordinate = false;
-	char response;
 
 	//if the last coordinate is being read then we will be placing the new node.
 	current_location == new_node->location_info->directionals.size() - 1 ?
