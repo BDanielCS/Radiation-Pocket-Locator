@@ -63,12 +63,15 @@ public:
 	~RadiationGraph();
 	const string printOptions();
 	size_t getSize();
+	int explicit_size();
 	void add(string*);
+	void remove(string*);
 	void display(int);
-	Found* find(string*);
+	Found* in_graph(string*);
 	const map<string, Node*> getCurrentKnowledgeBase() const;
 
 private:
+	int additions;
 	Node* centroid = nullptr;
 	map<string, Node*> knowledge_base;
 	void parseCommand(string*, Node*);

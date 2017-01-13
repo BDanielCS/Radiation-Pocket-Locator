@@ -2,8 +2,18 @@
 
 //Master documentation.. here..
 
-//
+//***************************************************************
+// MLH PRIME HACKATHON ENTRY
+//Post Hackathon
+//Find a way to apply function that can be distributed throughout
+//the graph
+//For example, can mimck shattering of glass as rock impacts it 
+//at different points
+//***************************************************************
+
+//Developed and Tested by 
 //@author = Brandon Daniel
+//@author = DJ Sharma 
 
 #include "stdafx.h"
 #include "radiationgraph.h"
@@ -17,6 +27,7 @@
 #define EXIT 6
 
 void main_loop(RadiationGraph*);
+void prompt_help();
 
 int main(int argc, char *argv[]) {
 
@@ -45,6 +56,8 @@ int main(int argc, char *argv[]) {
 
 //running the cmd user interface and signals the 
 //interaction with the graph
+//makes the huge assumption that the user only enters valid coordinates
+//every time....
 void main_loop(RadiationGraph *globe) {
 
 	bool run = true;
@@ -66,12 +79,7 @@ void main_loop(RadiationGraph *globe) {
 			boost::to_upper(coordinates);
 
 			if (!coordinates.compare(HELP_KEYWORD)) {
-				cout << "An example command is shown below..." << endl;
-				cout << "A2W2N5-45 (Ascend 2, West 2, North 5 value 45)\n" << endl;
-
-				cout << "The list of valid commands are as follows." << endl;
-				cout << "N = North\n S = South\n E = East\n W = West\n"
-					<< "A = Ascend\n D = Descend" << endl;
+				prompt_help();
 			}
 			else {
 				globe->add(&coordinates);
@@ -79,11 +87,24 @@ void main_loop(RadiationGraph *globe) {
 
 			break;
 		case DELETE:
-			//go into the knowledge base a redirect all of the neighbors to the new neighbors
-			//the remove the node from the graph/knowledge_base
+			
+			//adding to the graph
+			std::cout << "Enter the coordinates or type \"help\" to see an example" << endl;
+			cin >> coordinates;
+
+			//if the help command was invoked
+			boost::to_upper(coordinates);
+
+			if (!coordinates.compare(HELP_KEYWORD)) {
+				prompt_help();
+			}
+			else {
+				globe->remove(&coordinates);
+			}
 			break;
 		case SIZE:
-			cout << "There were " << globe->getSize() << " total nodes added to the graph" << endl;
+			cout << "There were " << globe->getSize() << " total nodes added to the graph" <<
+				" with " << globe->explicit_size() << " being empty" << endl;
 			break;
 		case DISPLAY:
 			globe->display(-1);
@@ -100,4 +121,15 @@ void main_loop(RadiationGraph *globe) {
 
 		}
 	}
+}
+
+//prompt to enter a coordinate or display the 
+//help display
+void prompt_help() {
+	cout << "An example command is shown below..." << endl;
+	cout << "A2W2N5-45 (Ascend 2, West 2, North 5 value 45)\n" << endl;
+
+	cout << "The list of valid commands are as follows." << endl;
+	cout << " N = North\n S = South\n E = East\n W = West\n"
+		<< " A = Ascend\n D = Descend\n" << endl;
 }

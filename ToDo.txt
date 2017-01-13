@@ -1,9 +1,12 @@
 Order of Items to complete
 
 1. Ensure the addition works properly in All directions
-	--infinte loop on multi direction additions
-2. Ensure the size maintains the number of nodes properly
+	--infinte loop on multi direction additions                     X
+2. Ensure the size maintains the number of nodes properly           X
 3. Ensure delete properly frees all memory
 	--Destructor finish
+	--delete of centroid vacant val
+	--delete of node chain re assigns pointers
+	--master cleaner that removes double linked vacant nodes
 4. Ensures that clusters function can work for different sizes in sparse graphs
 5. Visual distribution and appoximation functions.

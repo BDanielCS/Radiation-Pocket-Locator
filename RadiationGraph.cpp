@@ -1,27 +1,30 @@
 //RadiationGraph.cpp
 
-// **************************************************************
-// MLH PRIME HACKATHON ENTRY
+//The 3D graph allows the user to generate a 3d linkage of nodes
+//which can be analyzed to determine where clusters are located
+// and how to data stored within each node is distributed
+//statistically. 
+//Nodes are "deleted" by marking them as vacant in the moment
+//and then performing systeming cleanings of the graph to remove any areas
+//where two nodes are vacant.
 
-//The 3D graph allows the user to generate a 3D object with 
-//some integer values. A centroid is automatically generated and
-// all nodes branch off from it in all directions in R^3. 
-//
+//Nodes are added to the graph in a recursive manner to find the proper 
+//location. Empty placeholder nodes are added to the graph in situations where
+//the direction must change but there is no node present where the change in direction
+//can take place
 
-//****************************************************************
-
-
-
-//Developed by 
-//Brandon Daniel
-//DJ Sharma 
+//The clustering algorithm (which more accurately described as a community
+//algorithm) attempts to find groupings of nodes with at most the distance
+//prompted by the user. 
 
 #include "stdafx.h"
 #include "Utility.h"
+#include "boost\foreach.hpp"
 
 //optimizes the IO operations upon initialization
 RadiationGraph::RadiationGraph() {
 	ios::sync_with_stdio(false);
+	additions = 1;
 
 	//the centroid is predefined as "C-VACANT"
 	centroid = new Node;
@@ -37,19 +40,36 @@ RadiationGraph::RadiationGraph() {
 //from the knowledge
 RadiationGraph::~RadiationGraph() {
 
-	/*for (auto &iter : knowledge_base) {
-		delete iter.second->location_info;
-		delete iter.second;
-	}
+	Node* curr;
 
-	delete centroid->location_info;
-	delete centroid;
-	*/
+	for (auto it = knowledge_base.cbegin(); it != knowledge_base.cend();) {
+		curr = it->second;
+
+		delete curr->location_info;
+		delete curr;
+
+		knowledge_base.erase(it++);
+	}
 }
 
 //return the amount of nodes created, nodes can be
 //created while moving towards a desired coordinate
 size_t RadiationGraph::getSize() { return knowledge_base.size(); }
+
+//returns the number of nodes currently marked as
+//vacant in the graph
+int RadiationGraph::explicit_size() {
+	int empty_nodes = 0;
+	typedef pair<string, Node*> entry;
+
+	BOOST_FOREACH(entry curr, knowledge_base) {
+		if (curr.second->val == VACANT) {
+			empty_nodes++;
+		}
+	}
+
+	return empty_nodes;
+}
 
 //displays all of the nodes in the graph currently as well
 // as all of the neighbors to each node. Nodes that were created 
@@ -186,7 +206,7 @@ void RadiationGraph::updateLocation(Node* empty, Location* info, int index) {
 
 //given a full coordinate, determines if there is a node at that 
 //coordinate with the inputted value
-Found* RadiationGraph::find(string *command) {
+Found* RadiationGraph::in_graph(string *command) {
 
 	Node* new_node = new Node;
 	Found *status = new Found;
@@ -247,16 +267,49 @@ void RadiationGraph::add(string *command) {
 	}
 }
 
+//removes a node from the graph and deallocs all memory associated
+//with that node.  If the centroid is targeted, then sets its value
+//to vacant
+void RadiationGraph::remove(string * command) {
+
+	Node* to_remove;
+	map<string, Node*>::iterator node_iterator;
+
+	//centroid removal
+	if (command->at(0) == CENTROID) {
+		to_remove = knowledge_base.find("CENTROID")->second;
+		to_remove->val = VACANT;
+	} // we need to remove node and update all references
+	else {
+		to_remove = new Node;
+		to_remove->location_info = new Location;
+		parseCommand(command, to_remove);
+		to_remove->location_info->coordinate = *command;
+
+		//check if the node exists within the graph
+		if ((node_iterator = knowledge_base.find(to_remove->location_info->coordinate))
+			== knowledge_base.end()) {
+		}// the node exists, mark as vacant for possible cleanup
+		else {
+			node_iterator->second->val = VACANT;
+		}
+
+		//delete the temp node
+		delete to_remove->location_info;
+		delete to_remove;
+	}
+}
+
 //determine if a permutation of the inputted coordinate 
 //is equivalent to one that is already in the graph
 //ex. N2E2 == E2N2.  If there is no perm found, 
 //then nullptr is returned
 Node* RadiationGraph::isMatch(Location* loc) {
-	
+
 	int counter = 0;
 	map<string, Node*>::iterator foundEntry;
 
-	set<string> permutations =  Utility::permutations(loc->coordinate);
+	set<string> permutations = Utility::permutations(loc->coordinate);
 
 	//find match
 	for each(string perm in permutations) {

@@ -19,11 +19,11 @@ set<string> Utility::permutations(string toPermute) {
 	permutations.insert(toPermute);
 
 	//there is only permutation of a string of length of 1
-	if (toPermute.length() / 2 == 1) {
+	if (toPermute.length() / 2 <= 1) {
 		return permutations;
 	}//there are only two permutations of length 2
 	else if (toPermute.length() / 2 == 2) {
-		permutations.insert(swap_perm_spot(toPermute, 0, 2));
+		permutations.insert(swap_perm_spot(toPermute, 0, 1));
 		return permutations;
 	}
 
