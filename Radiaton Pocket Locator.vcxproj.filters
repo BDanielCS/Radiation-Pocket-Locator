@@ -19,6 +19,9 @@
     <Text Include="ToDo.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="Improvements_for_futuretxt.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

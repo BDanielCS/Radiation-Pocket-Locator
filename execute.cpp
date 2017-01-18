@@ -1,7 +1,5 @@
 //execute.cpp
 
-//Master documentation.. here..
-
 //***************************************************************
 // MLH PRIME HACKATHON ENTRY
 //Post Hackathon
@@ -11,9 +9,12 @@
 //at different points
 //***************************************************************
 
+//Global Documentation...
+// The radiation graph
+
+
 //Developed and Tested by 
 //@author = Brandon Daniel
-//@author = DJ Sharma 
 
 #include "stdafx.h"
 #include "radiationgraph.h"
@@ -24,7 +25,8 @@
 #define SIZE 3
 #define DISPLAY 4
 #define CLUSTERS 5
-#define EXIT 6
+#define HISTOGRAM 6
+#define EXIT 7
 
 void main_loop(RadiationGraph*);
 void prompt_help();
@@ -62,7 +64,7 @@ void main_loop(RadiationGraph *globe) {
 
 	bool run = true;
 	string coordinates;
-	int option;
+	int option, cluster_dist = 0;
 	const string HELP_KEYWORD = "HELP";
 
 	while (run) {
@@ -110,7 +112,13 @@ void main_loop(RadiationGraph *globe) {
 			globe->display(-1);
 			break;
 		case CLUSTERS:
-			//use some type of spanning algorithm, "kruskals"? for this.
+			cout << "Maximum node distance for each cluster" << endl;
+			cin >> cluster_dist;
+
+			globe->print_cluster(cluster_dist);
+			break;
+		case HISTOGRAM:
+			cout << "Displaying histogram now..." << endl;
 			break;
 		case EXIT:
 			run = false;

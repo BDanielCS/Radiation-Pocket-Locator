@@ -9,4 +9,5 @@ Order of Items to complete
 	--delete of node chain re assigns pointers
 	--master cleaner that removes double linked vacant nodes
 4. Ensures that clusters function can work for different sizes in sparse graphs
+	--yeah it works for now, but polymorphism?
 5. Visual distribution and appoximation functions.

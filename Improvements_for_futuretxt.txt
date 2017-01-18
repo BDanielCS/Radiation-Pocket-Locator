@@ -1,0 +1,13 @@
+POST HACKATHON
+
+A Small list of improvements that can be made to improve the
+performance and/or the readability of the code.
+
+1. Very repetitvie If statements, within the insertiion and
+	clustering algorithms. Possibly, the graph could be redesigned
+	to take better use of polymorphism.
+
+2.Implement the use of some data structure to monitor what nodes have
+	been already added to the cluster.  This will reduce the amount of time
+	we traverse over nodes that have been already covered within the graph. Also
+	will reduce the repition when printing out all of the clusters (set intersection?)

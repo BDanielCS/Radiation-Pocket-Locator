@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="Improvements_for_futuretxt.txt" />
     <Text Include="ReadMe.txt" />
     <Text Include="ToDo.txt" />
   </ItemGroup>

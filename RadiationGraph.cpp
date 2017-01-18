@@ -20,6 +20,7 @@
 #include "stdafx.h"
 #include "Utility.h"
 #include "boost\foreach.hpp"
+#include "boost\lexical_cast.hpp"
 
 //optimizes the IO operations upon initialization
 RadiationGraph::RadiationGraph() {
@@ -32,6 +33,7 @@ RadiationGraph::RadiationGraph() {
 	centroid->location_info = new Location;
 	centroid->location_info->directionals.push_back(CENTROID);
 	centroid->location_info->distances.push_back(0);
+	centroid->location_info->coordinate = CENTROID;
 
 	knowledge_base.insert(pair<string, Node*>("CENTROID", centroid));
 }
@@ -58,7 +60,8 @@ size_t RadiationGraph::getSize() { return knowledge_base.size(); }
 
 //returns the number of nodes currently marked as
 //vacant in the graph
-int RadiationGraph::explicit_size() {
+int RadiationGraph::explicit_size()
+{
 	int empty_nodes = 0;
 	typedef pair<string, Node*> entry;
 
@@ -71,6 +74,212 @@ int RadiationGraph::explicit_size() {
 	return empty_nodes;
 }
 
+//of some predefined distance, print out all of the
+//found unique clusters in the graph less than or equal 
+//to the passed in size
+void RadiationGraph::print_cluster(const int dist) {
+
+	vector<set<Node*>> communities;
+	int counter = 1;
+
+	if (dist <= 0) {
+		cout << "Invalid distance " << dist << endl;
+	}
+	else {
+
+		communities = get_communities_of_size(dist);
+
+		if (communities.size() != 0) {
+			//print out all of the clusters found
+			for each(set<Node*> cluster in communities) {
+				cout << "Cluster " << counter << endl;
+
+				for each(Node* curr in cluster) {
+					cout << to_string(curr);
+				}
+				cout << endl;
+				counter++;
+			}
+		}
+		else {
+			cout << "No clusters of size " << dist << " were found." << endl;
+		}
+
+	}
+}
+
+//go through the nodes of the graph and determine is there are adjacent
+//nodes that satisfy the dist constraint. 
+vector<set<Node*>> RadiationGraph::get_communities_of_size(const int dist) {
+	vector<set<Node*>> community;
+	set<Node*>* cluster;
+
+	//get each set which consists of the evaluated cluster and dealloc memory
+	for each(pair<string, Node*> curr in knowledge_base) {
+		cluster = depth_first_analysis(curr.second, dist);
+
+		//exclude clusters of self only
+		if (cluster->size() > 1) {
+			community.push_back(*cluster);
+		}
+		delete cluster;
+	}
+
+	return community;
+}
+
+//Starting at some node in the graph. Go outwards in
+//all directions and see if the adjacent node is within the distance
+//constraint specified in the parameter
+set<Node*>* RadiationGraph::depth_first_analysis(Node* curr, const int dist) {
+
+	set<Node*>* community = new set<Node*>;
+
+	community->insert(curr);
+
+	//null check even though items from knowledge base should never be null (precaution)
+	if (curr != nullptr) {
+		depth_first_analysis_helper(community, curr, dist);
+	}
+	return community;
+
+}
+
+// see depth_first_anlysis
+void RadiationGraph::depth_first_analysis_helper(set<Node*>* community,
+	Node* curr, const int dist) {
+
+	int directional_dist = 0, current_dist = 0;
+
+	//ascend upwards as far as possible first.
+	if (curr->ascend != nullptr && curr->ascend->val != VACANT) {
+		directional_dist = get_directional_dist(curr->ascend, ASCEND);
+		current_dist = get_directional_dist(curr, ASCEND);
+
+		//current should never be -1. set to zero if case arises
+		if (current_dist == VACANT) {
+			current_dist = 0;
+		}
+
+		if (directional_dist != VACANT && (curr->ascend->location_info->directionals
+			.at(directional_dist) - curr->location_info->directionals.at(current_dist)) <= dist) {
+			community->insert(curr->ascend);
+			depth_first_analysis_helper(community, curr->ascend, dist);
+		}
+	}
+
+	//descend as far as possible
+	if (curr->descend != nullptr && curr->descend->val != VACANT) {
+		directional_dist = get_directional_dist(curr->descend, DESCEND);
+		current_dist = get_directional_dist(curr, DESCEND);
+
+		//current should never be -1. set to zero if case arises
+		if (current_dist == VACANT) {
+			current_dist = 0;
+		}
+
+		if (directional_dist != VACANT && (curr->descend->location_info->directionals
+			.at(directional_dist) - curr->location_info->directionals.at(current_dist)) <= dist) {
+			community->insert(curr->descend);
+			depth_first_analysis_helper(community, curr->descend, dist);
+		}
+	}
+
+	//Move northward as far as possible
+	if (curr->north != nullptr && curr->north->val != VACANT) {
+		directional_dist = get_directional_dist(curr->north, NORTH);
+		current_dist = get_directional_dist(curr, NORTH);
+
+		//current should never be -1. set to zero if case arises
+		if (current_dist == VACANT) {
+			current_dist = 0;
+		}
+
+		if (directional_dist != VACANT && (curr->north->location_info->directionals
+			.at(directional_dist) - curr->location_info->directionals.at(current_dist)) <= dist) {
+			community->insert(curr->north);
+			depth_first_analysis_helper(community, curr->north, dist);
+		}
+	}
+
+	//move as far south as possible
+	if (curr->south != nullptr && curr->south->val != VACANT) {
+		directional_dist = get_directional_dist(curr->south, SOUTH);
+		current_dist = get_directional_dist(curr, SOUTH);
+
+		//current should never be -1. set to zero if case arises
+		if (current_dist == VACANT) {
+			current_dist = 0;
+		}
+
+		if (directional_dist != VACANT && (curr->south->location_info->directionals
+			.at(directional_dist) - curr->location_info->directionals.at(current_dist)) <= dist) {
+			community->insert(curr->south);
+			depth_first_analysis_helper(community, curr->south, dist);
+		}
+	}
+
+	//move as far east as possible
+	if (curr->east != nullptr && curr->east->val != VACANT) {
+		directional_dist = get_directional_dist(curr->east, EAST);
+		current_dist = get_directional_dist(curr, EAST);
+
+		//current should never be -1. set to zero if case arises
+		if (current_dist == VACANT) {
+			current_dist = 0;
+		}
+
+		if (directional_dist != VACANT && (curr->east->location_info->directionals
+			.at(directional_dist) - curr->location_info->directionals.at(current_dist)) <= dist) {
+			community->insert(curr->east);
+			depth_first_analysis_helper(community, curr->east, dist);
+		}
+	}
+
+	//go as far westward as possible
+	if (curr->west != nullptr && curr->west->val != VACANT) {
+		directional_dist = get_directional_dist(curr->west, WEST);
+		current_dist = get_directional_dist(curr, WEST);
+
+		//current should never be -1. set to zero if case arises
+		if (current_dist == VACANT) {
+			current_dist = 0;
+		}
+
+		if (directional_dist != VACANT && (curr->west->location_info->directionals
+			.at(directional_dist) - curr->location_info->directionals.at(current_dist)) <= dist) {
+			community->insert(curr->west);
+			depth_first_analysis_helper(community, curr->west, dist);
+		}
+	}
+}
+
+
+//given one of the predefined directionals, attempt to find the distance
+//associated with it.  If not found, then return error code -1 (vacant)
+int RadiationGraph::get_directional_dist(Node* node, const char direct) {
+	Location* loc = node->location_info;
+
+	for (int i = 0; i < loc->directionals.size(); i++) {
+		if (loc->directionals.at(i) == direct) {
+			return i;
+		}
+	}
+
+	return VACANT;
+}
+
+//to string, what is this.. java?
+string RadiationGraph::to_string(Node* curr) {
+	string to_ret;
+
+	to_ret = curr->location_info->coordinate;
+	to_ret.append(" ");
+	to_ret.append(boost::lexical_cast<string>(curr->val));
+	to_ret.append(" ");
+
+	return to_ret;
+}
 //displays all of the nodes in the graph currently as well
 // as all of the neighbors to each node. Nodes that were created 
 //with the VACANT macro will also be displayed as empty
@@ -180,7 +389,7 @@ void RadiationGraph::display(int predefined_choice) {
 const std::string RadiationGraph::printOptions() {
 
 	return "Enter the number associated with your selection:\nAdd Item(1)\n"
-		"Delete(2)\nSize(3)\nDisplay(4)\nClusters(5)\nExit(6)\n";
+		"Delete(2)\nSize(3)\nDisplay(4)\nClusters(5)\nHistogram(6)\nExit(7)\n";
 }
 
 //given a dyanamically allocated node, updates its information to
@@ -826,4 +1035,18 @@ int RadiationGraph::parseInt(string *command, int *index) {
 	}
 	//save distance associated with directional
 	return stoi(dist);
+}
+
+//for all of the values currently in the graph, display all of the
+//information as a histogram for the user
+void RadiationGraph::display_histogram() {
+	int hist[MAX_BINS] = { 0 };
+
+	//load in count of all vals
+	for each (pair<string, Node*> curr in knowledge_base) {
+		hist[curr.second->val]++;
+	}
+
+
+
 }

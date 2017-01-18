@@ -7,6 +7,7 @@
 #define MAX_LENGTH 24
 #define VACANT -1
 #define MAX_COORDINATE_ENTRIES 3
+#define MAX_BINS 101
 
 #include <iostream>
 #include <string>
@@ -64,6 +65,8 @@ public:
 	const string printOptions();
 	size_t getSize();
 	int explicit_size();
+	void display_histogram();
+	void print_cluster(const int);
 	void add(string*);
 	void remove(string*);
 	void display(int);
@@ -77,8 +80,13 @@ private:
 	void parseCommand(string*, Node*);
 	void addRecursive(Node*, Node*, Node*, int);
 	int parseInt(string*, int*);
-	void updateLocation(Node*, Location*, int dist);
+	int get_directional_dist(Node*, const char);
+	void updateLocation(Node*, Location*, int);
 	Node* isMatch(Location*);
+	vector<set<Node*>> get_communities_of_size(const int);
+	set<Node*>* depth_first_analysis(Node*, const int);
+	void depth_first_analysis_helper(set<Node*>*, Node*, const int);
+	string to_string(Node*);
 };
 
 #endif
