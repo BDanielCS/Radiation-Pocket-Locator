@@ -1041,12 +1041,17 @@ int RadiationGraph::parseInt(string *command, int *index) {
 //information as a histogram for the user
 void RadiationGraph::display_histogram() {
 	int hist[MAX_BINS] = { 0 };
+	int total = 0;
 
 	//load in count of all vals
 	for each (pair<string, Node*> curr in knowledge_base) {
 		hist[curr.second->val]++;
+		total++;
 	}
 
-
+	//print the percentages and actual count of vals
+	for (int i = 0; i < MAX_BINS; i++) {
+		cout << i << "occurred " << hist[i] << " times which is about " << hist[i]/total << "%" << endl;
+	}
 
 }
