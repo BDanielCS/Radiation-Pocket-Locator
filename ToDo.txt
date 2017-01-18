@@ -10,4 +10,34 @@ Order of Items to complete
 	--master cleaner that removes double linked vacant nodes
 4. Ensures that clusters function can work for different sizes in sparse graphs
 	--yeah it works for now, but polymorphism?
-5. Visual distribution and appoximation functions.
+
+
+***********************************************************************************
+Test Cases
+1. Generation of graph
+2. Proper size on default generation
+3. Proper empty nodes on default generation
+4. Parsing of line properly splits up the coordinate from the value
+5. each directional is placed into each vector while maintaining its order
+6. each distnace is place into its vector while maintaining order
+7. The '-' character is always recognized as the end of coordinate
+8. Integer parsed correctly at any length
+9. Addition onto centroid 'C' updates its value. (no node created)
+10. Simple addition to empty graph properly adjusts each pointer of the pointers
+11. Proper addition to graph in one direction that requires a recurse farther into the graph
+12. Addition of a node between two nodes and adjust all pointers properly
+13. Successful addition of node that has two directional coordinate
+14. Successful addition of node that has three directional coordinate
+15. Successful empty node place with proper coordinate update
+16. Permutations properly list all permutations of coordinate
+17. ONLY update value for equivalent coordinate ( N2A2 == A2N2)
+18. Update value if node already exists in graph
+19. Removal of node sets value to vacant.
+20. If node not in graph, do nothing for removal
+21.Clustering properly determines if nodes are within specified distance from each other
+22. Clustering extends as far as possible, but stops at specified distance base case
+23. Clustering does not skip any directions for any level of recursion
+24. Clustering hits all nodes
+25. Addition works properly in all directions
+
+more to come...
