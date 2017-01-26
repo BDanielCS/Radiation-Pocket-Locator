@@ -119,6 +119,7 @@ void main_loop(RadiationGraph *globe) {
 			break;
 		case HISTOGRAM:
 			cout << "Displaying histogram now..." << endl;
+			globe->display_histogram();
 			break;
 		case EXIT:
 			run = false;
