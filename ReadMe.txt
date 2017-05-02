@@ -1,35 +1,29 @@
 ========================================================================
     CONSOLE APPLICATION : Radiaton Pocket Locator Project Overview
+                            @author = Brandon Daniel
 ========================================================================
 
-AppWizard has created this Radiaton Pocket Locator application for you.
+Radiation Graph as Designed During the MLH Prime Hackathon
 
-This file contains a summary of what you will find in each of the files that
-make up your Radiaton Pocket Locator application.
+ =======================================================================
+                            RADIATION GRAPH
+ =======================================================================
+ 
+    Aims to create a versatile and efficent graph-based API in order to perform
+analysis on radiation pockets in 3D space.  Standard graph operations are 
+implemented with the exception of the periodic sweeper.   Parallel cleaning 
+of removed nodes happens in systematic intervals in order to minimize the 
+amount of time during traversal and maximize performance in terms of insertions.
 
+    Implemted clustering feature in order to focus on more densely/strongly
+connected areas of the graph.  Feature is aimed towards use during analysis.
 
-Radiaton Pocket Locator.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
+=========================================================================
+                                Analysis
+=========================================================================
 
-Radiaton Pocket Locator.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+Post agregation of data, statistic analysis can be performed on any of the
+sectors of 3D space.  Confidence intervals around all desired estimators 
+can be drawn to make assumptions about the distribution of radiation on
+a given surface.
 
-Radiaton Pocket Locator.cpp
-    This is the main application source file. External library in use in Boost which
-    is not included in this repo
-
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named Radiaton Pocket Locator.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
